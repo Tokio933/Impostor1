@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IMPOSTOR</title>
+
+  <style>
+    :root {
+      --bg: #111111;
+      --panel: #1c1c1c;
+      --red: #e63946;
+      --red-dark: #b51f2b;
+      --white: #ffffff;
+      --gray: #aaaaaa;
+      --dark-gray: #222222;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--white);
+      font-family: Arial, sans-serif;
+    }
+
+    #app {
+      width: min(700px, 100%);
+      min-height: 500px;
+      margin: 0 auto;
+      padding: 25px;
+      text-align: center;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin: 70px 0 10px;
+      color: var(--red);
+      font-size: 42px;
+    }
+
+    h2 {
+      margin: 40px 0 18px;
+      font-size: 28px;
+    }
+
+    button {
+      display: block;
+      min-width: 220px;
+      margin: 10px auto;
+      padding: 14px 25px;
+      border: 0;
+      border-radius: 3px;
+      background: var(--red);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    button:hover {
+      background: var(--red-dark);
+      transform: translateY(-1px);
+    }
+
+    .subtitle,
+    .description,
+    .player-number,
+    .pass-info {
+      color: var(--gray);
+    }
+
+    .subtitle {
+      margin-bottom: 50px;
+      font-size: 11px;
+    }
+
+    .description {
+      margin-bottom: 25px;
+      font-size: 13px;
+    }
+
+    .back-button,
+    .exit-button {
+      min-width: auto;
+      margin-top: 15px;
+      padding: 9px 15px;
+      background: transparent;
+      color: var(--gray);
+      font-size: 11px;
+      font-weight: normal;
+    }
+
+    .back-button:hover,
+    .exit-button:hover {
+      background: transparent;
+      color: var(--white);
+      transform: none;
+    }
+
+    input {
+      width: 260px;
+      padding: 12px;
+      border: 0;
+      border-radius: 3px;
+      outline: none;
+      background: var(--panel);
+      color: var(--white);
+      font-size: 17px;
+      text-align: center;
+    }
+
+    input::placeholder {
+      color: #777777;
+    }
+
+    .error {
+      min-height: 22px;
+      margin: 12px 0;
+      color: var(--red);
+      font-size: 11px;
+    }
+
+    .players-list {
+      max-height: 330px;
+      overflow-y: auto;
+      margin: 20px 0;
+    }
+
+    .player-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 9px 0;
+    }
+
+    .player-row label {
+      width: 85px;
+      color: var(--gray);
+      font-size: 11px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .player-row input {
+      width: 230px;
+      padding: 10px;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      max-width: 500px;
+      margin: 30px auto;
+    }
+
+    .category-button {
+      width: 100%;
+      min-width: 0;
+      margin: 0;
+      background: var(--panel);
+    }
+
+    .category-button:hover {
+      background: var(--red);
+    }
+
+    .category-label {
+      margin: 10px 0;
+      color: var(--red);
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .pass-info {
+      margin: 35px 0;
+      font-size: 13px;
+    }
+
+    .impostor-text {
+      margin: 20px 0;
+      color: var(--red);
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .hint {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .secret-label {
+      margin: 12px 0;
+      color: var(--gray);
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .secret-word {
+      margin: 15px 0;
+      color: var(--white);
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .vote-list {
+      width: 350px;
+      max-width: 100%;
+      margin: 0 auto 25px;
+    }
+
+    .vote-card {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 55px;
+      margin: 5px 0;
+      padding: 0 15px;
+      border-radius: 3px;
+      background: var(--panel);
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.2s;
+    }
+
+    .vote-card:hover {
+      background: var(--dark-gray);
+    }
+
+    .vote-card.selected {
+      background: var(--red);
+    }
+
+    .vote-icon {
+      margin-right: 15px;
+      font-size: 20px;
+    }
+
+    .vote-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .vote-check {
+      width: 28px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .chosen-player {
+      margin: 15px 0;
+      color: var(--red);
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .result-title {
+      margin-top: 70px;
+      font-size: 35px;
+    }
+
+    .result-text {
+      margin: 20px 0;
+      white-space: pre-line;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .result-info {
+      margin-top: 20px;
+      color: var(--gray);
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      #app {
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .player-row {
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .player-row label {
+        width: auto;
+        text-align: center;
+      }
+
+      .player-row input {
+        width: min(280px, 90vw);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main id="app"></main>
+
+  <script>
+    const app = document.getElementById("app");
+
+    const kategorie = {
+      "ZWIERZĘTA": {
+        "Pies": "Ma cztery łapy i często szczeka.",
+        "Kot": "Często miauczy.",
+        "Lew": "Nazywany królem zwierząt.",
+        "Słoń": "Ma długą trąbę.",
+        "Żyrafa": "Ma bardzo długą szyję."
+      },
+
+      "SPORT": {
+        "Piłka nożna": "Gra się na boisku i są bramki.",
+        "Koszykówka": "Jest obręcz i piłka.",
+        "Tenis": "Potrzebna jest rakieta.",
+        "Pływanie": "Uprawia się to w wodzie.",
+        "Boks": "W tym sporcie używa się rękawic."
+      },
+
+      "JEDZENIE": {
+        "Pizza": "Zwykle jest okrągła i może mieć ser.",
+        "Burger": "Często jest w bułce.",
+        "Rogal": "Ma charakterystyczny zakrzywiony kształt.",
+        "Lody": "Są zimne i słodkie.",
+        "Frytki": "Często podaje się je do burgera."
+      },
+
+      "GRY": {
+        "Minecraft": "Buduje się tutaj z bloków.",
+        "Fortnite": "Popularna gra z trybem Battle Royale.",
+        "Roblox": "Platforma z wieloma różnymi grami.",
+        "Tetris": "Układa się spadające klocki.",
+        "Mario": "Bohater w czerwonej czapce."
+      },
+
+      "MIEJSCA": {
+        "Plaża": "Jest tam piasek i morze.",
+        "Szkoła": "Uczy się tam różnych rzeczy.",
+        "Las": "Rośnie tam dużo drzew.",
+        "Kino": "Ogląda się tam filmy.",
+        "Stadion": "Odbywają się tam wydarzenia sportowe."
+      },
+
+      "FILMY": {
+        "Harry Potter": "Jest związany z magią i szkołą.",
+        "Spider-Man": "Bohater potrafiący wspinać się po ścianach.",
+        "Shrek": "Zielony bohater mieszkający na bagnie.",
+        "Batman": "Bohater związany z Gotham.",
+        "Król Lew": "Historia młodego lwa."
+      }
+    };
+
+    let gracze = [];
+    let wybranaKategoria = "";
+    let dostepneSlowa = [];
+    let slowo = "";
+    let impostor = 0;
+    let aktualnyGracz = 0;
+    let wybranyGracz = "";
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function pokaz(html) {
+      app.innerHTML = html;
+    }
+
+    function button(text, callback, className = "") {
+      const btn = document.createElement("button");
+      btn.textContent = text;
+      btn.className = className;
+      btn.addEventListener("click", callback);
+      return btn;
+    }
+
+    function dodajPrzycisk(text, callback, className = "") {
+      app.appendChild(button(text, callback, className));
+    }
+
+    function menu() {
+      pokaz(`
+        <h1>IMPOSTOR</h1>
+        <div class="subtitle">by Tokio</div>
+        <div id="buttons"></div>
+      `);
+
+      const buttons = document.getElementById("buttons");
+
+      buttons.appendChild(
+        button("NOWA GRA", nowaGra)
+      );
+
+      buttons.appendChild(
+        button("WYJŚCIE", wyjscie, "exit-button")
+      );
+    }
+
+    function wyjscie() {
+      document.body.innerHTML = `
+        <div style="
+          width: 100%;
+          padding-top: 40vh;
+          color: #aaaaaa;
+          background: #111111;
+          font-family: Arial, sans-serif;
+          text-align: center;
+        ">
+          Możesz zamknąć tę kartę przeglądarki.
+        </div>
+      `;
+    }
+
+    function nowaGra() {
+      pokaz(`
+        <h2>ILU JEST GRACZY?</h2>
+        <div class="description">Wpisz liczbę graczy (3–20)</div>
+        <input id="playerCount" type="number" min="3" max="20" autofocus>
+        <div id="error" class="error"></div>
+        <div id="buttons"></div>
+      `);
+
+      const input = document.getElementById("playerCount");
+      const error = document.getElementById("error");
+      const buttons = document.getElementById("buttons");
+
+      buttons.appendChild(
+        button("DALEJ →", () => {
+          const liczba = Number(input.value);
+
+          if (!Number.isInteger(liczba) || liczba < 3 || liczba > 20) {
+            error.textContent = "Liczba graczy musi być od 3 do 20!";
+            return;
+          }
+
+          wybierzGraczy(liczba);
+        })
+      );
+
+      buttons.appendChild(
+        button("← POWRÓT", menu, "back-button")
+      );
+
+      input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+          buttons.querySelector("button").click();
+        }
+      });
+    }
+
+    function wybierzGraczy(liczba) {
+      let pola = "";
+
+      for (let i = 1; i <= liczba; i++) {
+        pola += `
+          <div class="player-row">
+            <label for="player-${i}">GRACZ ${i}</label>
+            <input
+              id="player-${i}"
+              type="text"
+              maxlength="25"
+              placeholder="Nick gracza ${i}"
+            >
+          </div>
+        `;
+      }
+
+      pokaz(`
+        <h2>GRACZE</h2>
+        <div class="description">Wpisz nick każdego gracza</div>
+        <div class="players-list">${pola}</div>
+        <div id="buttons"></div>
+      `);
+
+      document.getElementById("buttons").appendChild(
+        button("DALEJ →", rozpocznijGre)
+      );
+    }
+
+    function rozpocznijGre() {
+      const pola = document.querySelectorAll(".player-row input");
+
+      gracze = Array.from(pola).map((pole, index) => {
+        const nick = pole.value.trim();
+        return nick || `Gracz ${index + 1}`;
+      });
+
+      wybierzKategorie();
+    }
+
+    function wybierzKategorie() {
+      const nazwyKategorii = Object.keys(kategorie);
+
+      pokaz(`
+        <h2>WYBIERZ KATEGORIĘ</h2>
+        <div class="description">Wybierz kategorię haseł</div>
+        <div id="categoryGrid" class="category-grid"></div>
+      `);
+
+      const grid = document.getElementById("categoryGrid");
+
+      nazwyKategorii.forEach(nazwa => {
+        const btn = button(
+          nazwa,
+          () => rozpocznijPoKategorii(nazwa),
+          "category-button"
+        );
+
+        grid.appendChild(btn);
+      });
+
+      dodajPrzycisk("← POWRÓT", nowaGra, "back-button");
+    }
+
+    function rozpocznijPoKategorii(kategoria) {
+      wybranaKategoria = kategoria;
+      dostepneSlowa = Object.keys(kategorie[wybranaKategoria]);
+
+      wylosujRunde();
+      pokazRole();
+    }
+
+    function wylosujRunde() {
+      if (dostepneSlowa.length === 0) {
+        dostepneSlowa = Object.keys(kategorie[wybranaKategoria]);
+      }
+
+      const indeks = Math.floor(Math.random() * dostepneSlowa.length);
+
+      slowo = dostepneSlowa[indeks];
+      dostepneSlowa.splice(indeks, 1);
+
+      impostor = Math.floor(Math.random() * gracze.length);
+      aktualnyGracz = 0;
+    }
+
+    function pokazRole() {
+      const gracz = gracze[aktualnyGracz];
+
+      pokaz(`
+        <h2>${escapeHtml(gracz.toUpperCase())}</h2>
+
+        <div class="category-label">
+          KATEGORIA: ${escapeHtml(wybranaKategoria)}
+        </div>
+
+        <div class="player-number">
+          GRACZ ${aktualnyGracz + 1} / ${gracze.length}
+        </div>
+
+        <div class="pass-info">
+          Przekaż komputer temu graczowi.
+        </div>
+
+        <div id="buttons"></div>
+      `);
+
+      document.getElementById("buttons").appendChild(
+        button("POKAŻ ROLĘ", pokazSlowo)
+      );
+    }
+
+    function pokazSlowo() {
+      const gracz = gracze[aktualnyGracz];
+
+      let tresc;
+
+      if (aktualnyGracz === impostor) {
+        tresc = `
+          <div class="impostor-text">IMPOSTOR</div>
+          <div class="hint">
+            ${escapeHtml(kategorie[wybranaKategoria][slowo])}
+          </div>
+        `;
+      } else {
+        tresc = `
+          <div class="secret-label">TAJNE SŁOWO</div>
+          <div class="secret-word">${escapeHtml(slowo)}</div>
+        `;
+      }
+
+      pokaz(`
+        <h2>${escapeHtml(gracz.toUpperCase())}</h2>
+        ${tresc}
+        <div id="buttons"></div>
+      `);
+
+      document.getElementById("buttons").appendChild(
+        button("UKRYJ I DALEJ →", nastepnyGracz)
+      );
+    }
+
+    function nastepnyGracz() {
+      aktualnyGracz++;
+
+      if (aktualnyGracz < gracze.length) {
+        pokazRole();
+      } else {
+        runda();
+      }
+    }
+
+    function runda() {
+      pokaz(`
+        <h2>CZAS NA WSKAZÓWKI</h2>
+        <div class="description">
+          Każdy gracz podaje swoją wskazówkę.
+        </div>
+        <div id="buttons"></div>
+      `);
+
+      document.getElementById("buttons").appendChild(
+        button("PRZEJDŹ DO GŁOSOWANIA", glosowanie)
+      );
+    }
+
+    function glosowanie() {
+      wybranyGracz = "";
+
+      pokaz(`
+        <h2>KTO JEST IMPOSTOREM?</h2>
+        <div id="voteList" class="vote-list"></div>
+        <div id="buttons"></div>
+      `);
+
+      const voteList = document.getElementById("voteList");
+
+      gracze.forEach(gracz => {
+        const karta = document.createElement("div");
+        karta.className = "vote-card";
+
+        karta.innerHTML = `
+          <span class="vote-icon">●</span>
+          <span class="vote-name">${escapeHtml(gracz)}</span>
+          <span class="vote-check"></span>
+        `;
+
+        karta.addEventListener("click", () => {
+          wybranyGracz = gracz;
+
+          document.querySelectorAll(".vote-card").forEach(element => {
+            element.classList.remove("selected");
+            element.querySelector(".vote-check").textContent = "";
+          });
+
+          karta.classList.add("selected");
+          karta.querySelector(".vote-check").textContent = "✓";
+        });
+
+        voteList.appendChild(karta);
+      });
+
+      document.getElementById("buttons").appendChild(
+        button("GŁOSUJ", () => oddajGlos(wybranyGracz))
+      );
+    }
+
+    function oddajGlos(wybrany) {
+      if (!wybrany) {
+        return;
+      }
+
+      pokaz(`
+        <h2>TWÓJ GŁOS</h2>
+        <div class="chosen-player">${escapeHtml(wybrany)}</div>
+        <div id="buttons"></div>
+      `);
+
+      document.getElementById("buttons").appendChild(
+        button("POKAŻ WYNIK", () => wynik(wybrany))
+      );
+    }
+
+    function ponownaGra() {
+      wylosujRunde();
+      pokazRole();
+    }
+
+    function wynik(wybrany) {
+      const prawdziwyImpostor = gracze[impostor];
+
+      let naglowek;
+      let tekst;
+
+      if (wybrany === prawdziwyImpostor) {
+        naglowek = "DOBRZE!";
+        tekst = `${prawdziwyImpostor} był Impostorem.`;
+      } else {
+        naglowek = "ŹLE!";
+        tekst =
+          `Wybraliście: ${wybrany}\n\n` +
+          `Impostorem był: ${prawdziwyImpostor}`;
+      }
+
+      pokaz(`
+        <h2 class="result-title">${naglowek}</h2>
+        <div class="result-text">${escapeHtml(tekst)}</div>
+        <div id="buttons"></div>
+
+        <div class="result-info">
+          NOWA GRA = nowi gracze i nowa kategoria<br>
+          PONOWNA GRA = ci sami gracze, liczba graczy i kategoria
+        </div>
+      `);
+
+      const buttons = document.getElementById("buttons");
+
+      buttons.appendChild(
+        button("NOWA GRA", nowaGra)
+      );
+
+      buttons.appendChild(
+        button("PONOWNA GRA", ponownaGra)
+      );
+    }
+
+    menu();
+  </script>
+</body>
+</html>
